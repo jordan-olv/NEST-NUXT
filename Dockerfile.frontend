@@ -1,0 +1,20 @@
+# Utilise l'image officielle de Node
+FROM node:18-alpine
+
+# Définir le dossier de travail
+WORKDIR /app
+
+# Copier les fichiers package.json et package-lock.json pour le frontend
+COPY client/package.json client/package-lock.json ./
+
+# Installer les dépendances frontend avec npm
+RUN npm install
+
+# Copier le reste du code frontend
+COPY client ./
+
+# Exposer le port Nuxt
+EXPOSE 3001
+
+# Lancer l'application Nuxt.js
+CMD ["npm", "run", "dev"]

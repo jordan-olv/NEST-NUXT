@@ -1,0 +1,15 @@
+{
+  "name": "nest-react-todo-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "install-backend": "cd ./server && npm install",
+    "install-frontend": "cd ./client && npm install",
+    "start-server": "cd ./server && npm run start:dev",
+    "start-app": "cd ./client && npm run dev"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
