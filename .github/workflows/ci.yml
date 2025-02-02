@@ -34,7 +34,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 23
+          node-version: 21
 
       - name: Install dependencies (Backend)
         run: |
@@ -68,3 +68,9 @@ jobs:
         run: |
           cd client
           npm run build
+
+      - name: Run SonarQube Scan
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          npx sonarqube-scanner
