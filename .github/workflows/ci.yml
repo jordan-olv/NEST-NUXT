@@ -41,6 +41,31 @@ jobs:
           cd server
           npm install
 
+      - name: Install dependencies (Frontend)
+        run: |
+          cd client
+          npm install
+
+      - name: Run Linter (Backend)
+        run: |
+          cd server
+          npm run lint
+
+      - name: Run Linter (Frontend)
+        run: |
+          cd client
+          npm run lint
+
+      - name: Check Code Formatting (Backend)
+        run: |
+          cd server
+          npm run format:check
+
+      - name: Check Code Formatting (Frontend)
+        run: |
+          cd client
+          npm run format:check
+
       - name: Wait for Postgres to be ready
         run: |
           until pg_isready -h localhost -p 5432; do
@@ -59,10 +84,10 @@ jobs:
           cd server
           npm run test:e2e
 
-      - name: Install dependencies (Frontend)
+      - name: Build Backend
         run: |
-          cd client
-          npm install
+          cd server
+          npm run build
 
       - name: Build Frontend
         run: |
