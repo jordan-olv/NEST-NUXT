@@ -1,14 +1,16 @@
 name: Deploy to VPS
 
 on:
-  push:
+  workflow_run:
+    workflows: ["CI Pipeline Test"]  # Nom exact de ton fichier CI
     branches:
-      - dev  # Déploiement uniquement sur dev
+      - dev
+    types:
+      - completed  # Déclenche uniquement si le job est complété
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    needs: build-and-test  # Attendre la fin du job de tests avant de déployer
 
     steps:
       - name: Checkout code
