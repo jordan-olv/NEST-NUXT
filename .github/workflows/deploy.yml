@@ -50,11 +50,11 @@ jobs:
             rsync -avz --exclude '.git' --exclude 'node_modules' ./client/ ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }}:/home/${{ secrets.VPS_USERNAME }}/my_project/client/
 
             # Installer les dépendances et redémarrer les services
-            cd /home/${{ secrets.VPS_USERNAME }}/nestjs/server
+            cd /home/${{ secrets.VPS_USERNAME }}/pretemoitontruc/server
             npm install --production
             pm2 start dist/main.js --name my-api
 
-            cd /home/${{ secrets.VPS_USERNAME }}/nestjs/client
+            cd /home/${{ secrets.VPS_USERNAME }}/pretemoitontruc/client
             npm install --production
             npm run build
             pm2 serve .output/public 3000 --spa --name my-front
