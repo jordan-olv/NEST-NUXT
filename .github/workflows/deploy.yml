@@ -1,12 +1,9 @@
 name: Deploy to VPS Hostinger
 
 on:
-  workflow_run:
-    workflows: ["CI Pipeline Test"]  # Nom exact de ton fichier CI
+  push:
     branches:
-      - dev
-    types:
-      - completed  # Déclenche uniquement si le job est complété
+      - dev  
 
 jobs:
   deploy:
