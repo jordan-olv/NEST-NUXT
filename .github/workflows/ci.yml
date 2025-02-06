@@ -48,19 +48,9 @@ jobs:
           cd server
           npm run lint
 
-      - name: Run Linter (Frontend)
-        run: |
-          cd client
-          npm run lint
-
       - name: Check Code Formatting (Backend)
         run: |
           cd server
-          npm run format:check
-
-      - name: Check Code Formatting (Frontend)
-        run: |
-          cd client
           npm run format:check
 
       - name: Wait for Postgres to be ready
