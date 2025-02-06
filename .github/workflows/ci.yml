@@ -1,42 +1,88 @@
-name: CI Pipeline
+name: CI Pipeline Test
 
 on:
   pull_request:
     branches:
       - dev
-  push:
-    branches:
-      - main
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:15
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          POSTGRES_DB: testdb
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 23
 
       - name: Install dependencies (Backend)
         run: |
           cd server
           npm install
 
-      - name: Run Backend Tests
-        run: |
-          cd server
-          npm run test
-
       - name: Install dependencies (Frontend)
         run: |
           cd client
           npm install
 
+      - name: Run Linter (Backend)
+        run: |
+          cd server
+          npm run lint
+
+      - name: Check Code Formatting (Backend)
+        run: |
+          cd server
+          npm run format:check
+
+      - name: Wait for Postgres to be ready
+        run: |
+          until pg_isready -h localhost -p 5432; do
+            echo "Waiting for Postgres..."
+            sleep 2
+          done
+
+      - name: Run Backend Tests
+        env:
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_USERNAME: postgres
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_NAME: testdb
+        run: |
+          cd server
+          npm run test:e2e
+
+      - name: Build Backend
+        run: |
+          cd server
+          npm run build
+
       - name: Build Frontend
         run: |
           cd client
           npm run build
+
+      - name: Run SonarQube Scan
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          npx sonarqube-scanner

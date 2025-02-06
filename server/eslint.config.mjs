@@ -34,7 +34,7 @@ export default tseslint.config(
         'error',
 
         {
-          endOfLine: 'off',
+          endOfLine: 'auto',
         },
       ],
     },
