@@ -7,4 +7,4 @@ import { HelloService } from './hello.service';
   providers: [HelloService],
   exports: [HelloService],
 })
-export class HelloModule { }
+export class HelloModule {}

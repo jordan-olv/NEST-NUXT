@@ -5,7 +5,7 @@ import { HelloModule } from './modules/hello/hello.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),  // Pour charger les variables d'env globalement
+    ConfigModule.forRoot({ isGlobal: true }), // Pour charger les variables d'env globalement
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -16,11 +16,11 @@ import { HelloModule } from './modules/hello/hello.module';
         username: configService.get('DB_USERNAME'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_NAME'),
-        autoLoadEntities: true,   // Charge automatiquement les entités
-        synchronize: true,        // Synchronise la base à chaque démarrage (à désactiver en prod)
+        autoLoadEntities: true, // Charge automatiquement les entités
+        synchronize: true, // Synchronise la base à chaque démarrage (à désactiver en prod)
       }),
     }),
     HelloModule,
   ],
 })
-export class AppModule { }
+export class AppModule {}
