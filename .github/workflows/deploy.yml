@@ -34,6 +34,9 @@ jobs:
           npm install
           npm run build
 
+      - name: Install rsync
+        run: sudo apt-get update && sudo apt-get install -y rsync
+
       - name: Configure SSH Key
         run: |
           mkdir -p ~/.ssh
