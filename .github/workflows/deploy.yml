@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - name: Test SSH Connection
-        run: ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa root@${{ secrets.VPS_HOST }} "echo 'Connexion réussie !'"
+        run: ssh -o StrictHostKeyChecking=no -i ~/.ssh/github-action root@${{ secrets.VPS_HOST }} "echo 'Connexion réussie !'"
 
 
       - name: Checkout code
