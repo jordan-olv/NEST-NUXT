@@ -10,10 +10,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Test SSH Connection
-        run: ssh -o StrictHostKeyChecking=no -i ~/.ssh/github-action root@${{ secrets.VPS_HOST }} "echo 'Connexion réussie !'"
-
-
       - name: Checkout code
         uses: actions/checkout@v4
 
