@@ -5,7 +5,7 @@ services:
       dockerfile: Dockerfile.backend
     container_name: nestjs_backend
     ports:
-      - "3000:3000"
+      - "4021:4021"
     volumes:
       - ./server:/app
       - /app/node_modules
@@ -24,7 +24,7 @@ services:
       dockerfile: Dockerfile.frontend
     container_name: nuxt_frontend
     ports:
-      - "3001:3001"
+      - "3021:3021"
     volumes:
       - ./client:/app
       - /app/node_modules

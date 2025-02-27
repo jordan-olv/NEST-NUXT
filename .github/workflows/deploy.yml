@@ -90,4 +90,4 @@ jobs:
             cd ../client
             npm install --production
             npm run build
-            pm2 serve .output/public 3001 --spa --name my-front
+            pm2 serve .output/public 3021 --spa --name my-front

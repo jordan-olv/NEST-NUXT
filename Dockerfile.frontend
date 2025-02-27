@@ -14,7 +14,10 @@ RUN npm install
 COPY client ./
 
 # Exposer le port Nuxt
-EXPOSE 3001
+EXPOSE 3021
+
+# Supprimer le socket Nitro au démarrage et lancer Nuxt
+CMD rm -rf /tmp/nitro && npm run dev
 
 # Lancer l'application Nuxt.js
 CMD ["npm", "run", "dev"]

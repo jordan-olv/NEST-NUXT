@@ -14,7 +14,7 @@ RUN npm install
 COPY server ./
 
 # Exposer le port du backend
-EXPOSE 3000
+EXPOSE 4021
 
 # Lancer l'application NestJS
 CMD ["npm", "run", "start:dev"]
