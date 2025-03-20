@@ -42,7 +42,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: mydatabase
     volumes:
-      - pgdata:/var/lib/postgresql/data  # Assure-toi que ce volume est bien défini ci-dessous
+      - pgdata:/var/lib/postgresql/data 
 
   pgadmin:
     image: dpage/pgadmin4
@@ -57,4 +57,4 @@ services:
       - db
 
 volumes:
-  pgdata: {}  # Définition explicite du volume pgdata
+  pgdata: {}  
