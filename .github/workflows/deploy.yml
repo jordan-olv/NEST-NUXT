@@ -43,7 +43,8 @@ jobs:
 
       - name: Test SSH Connection
         run: |
-           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }} "echo 'Connexion SSH réussie !'"
+          echo "Tentative de connexion à ${{ secrets.VPS_HOST }}..."
+          ssh -v -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }} "echo 'Connexion SSH réussie !'"
 
       - name: Debug SSH Key
         run: |
