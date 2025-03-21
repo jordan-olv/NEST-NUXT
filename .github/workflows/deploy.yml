@@ -39,12 +39,15 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
+          ls -la ~/.ssh/id_rsa  # Pour vérifier la taille du fichier
+          echo "Type de clé détecté:"
+          ssh-keygen -l -f ~/.ssh/id_rsa  # Pour vérifier le type de clé
           ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
 
       - name: Test SSH Connection
         run: |
           echo "Tentative de connexion à ${{ secrets.VPS_HOST }}..."
-          ssh -v -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }} "echo 'Connexion SSH réussie !'"
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }} "echo 'Connexion SSH réussie !'"
 
       - name: Debug SSH Key
         run: |
