@@ -34,26 +34,17 @@ jobs:
       #     npm install
       #     npm run build
 
-      - name: Configure SSH Key (Alternative)
+      - name: Configure SSH Key
         run: |
           mkdir -p ~/.ssh
-          cat > ~/.ssh/id_rsa << 'EOL'
-          ${{ secrets.VPS_SSH_KEY }}
-          EOL
+          echo "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keygen -l -f ~/.ssh/id_rsa
-
-      - name: Debug SSH key content
-        run: |
-          echo "Premiers caractères de la clé:"
-          head -n 3 ~/.ssh/id_rsa
-          echo "Nombre de lignes dans la clé:"
-          wc -l ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
 
       - name: Test SSH Connection
         run: |
-          echo "Tentative de connexion à ${{ secrets.VPS_HOST }}..."
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }} "echo 'Connexion SSH réussie !'"
+          echo "Tentative de connexion..."
+          ssh -v -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }} "echo 'Connexion SSH réussie !'"
 
       - name: Debug SSH Key
         run: |
