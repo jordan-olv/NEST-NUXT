@@ -34,13 +34,6 @@ jobs:
       #     npm install
       #     npm run build
 
-      - name: Debug SSH key content
-        run: |
-          echo "Premiers caractères de la clé:"
-          head -n 3 ~/.ssh/id_rsa
-          echo "Nombre de lignes dans la clé:"
-          wc -l ~/.ssh/id_rsa
-
       - name: Configure SSH Key (Alternative)
         run: |
           mkdir -p ~/.ssh
@@ -49,6 +42,13 @@ jobs:
           EOL
           chmod 600 ~/.ssh/id_rsa
           ssh-keygen -l -f ~/.ssh/id_rsa
+
+      - name: Debug SSH key content
+        run: |
+          echo "Premiers caractères de la clé:"
+          head -n 3 ~/.ssh/id_rsa
+          echo "Nombre de lignes dans la clé:"
+          wc -l ~/.ssh/id_rsa
 
       - name: Test SSH Connection
         run: |
