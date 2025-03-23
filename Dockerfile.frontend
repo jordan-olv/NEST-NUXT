@@ -1,23 +1,20 @@
-# Utilise l'image officielle de Node
-FROM node:18-alpine
+# Utilise l'image officielle de Node 20.15
+FROM node:20.15-alpine
 
 # Définir le dossier de travail
 WORKDIR /app
 
-# Copier les fichiers package.json et package-lock.json pour le frontend
+# Copier les fichiers de dépendances
 COPY client/package.json client/package-lock.json ./
 
-# Installer les dépendances frontend avec npm
+# Installer les dépendances
 RUN npm install
 
-# Copier le reste du code frontend
+# Copier tout le reste du code du frontend
 COPY client ./
 
-# Exposer le port Nuxt
+# Exposer le port de Nuxt
 EXPOSE 3021
 
-# Supprimer le socket Nitro au démarrage et lancer Nuxt
-CMD rm -rf /tmp/nitro && npm run dev
-
-# Lancer l'application Nuxt.js
-CMD ["npm", "run", "dev"]
+# Supprimer les fichiers temporaires et démarrer Nuxt
+CMD rm -rf .nuxt /tmp/nitro && npm run dev
