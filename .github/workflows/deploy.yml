@@ -1,126 +1,46 @@
-name: Deploy to VPS Hostinger
+name: 🚀 Deploy to VPS
 
 on:
   push:
     branches:
-      - dev  
+      - main
+      - dev
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Debug SSH Key
-        run: |
-          echo "${{ secrets.VPS_SSH_KEY }}" | head -n 5
-
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 23
-
-      # - name: Install dependencies and build (Backend)
-      #   run: |
-      #     cd server
-      #     npm install
-      #     npm run build
-
-      # - name: Install dependencies and build (Frontend)
-      #   run: |
-      #     cd client
-      #     npm install
-      #     npm run build
-
-      - name: Configure SSH Key
+      - name: 📦 Préparation SSH
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
 
-      - name: 🔍 Vérification de la clé privée utilisée
+      - name: 🚀 Déploiement sur le VPS
         run: |
-          echo "Fingerprint locale de la clé chargée :"
-          ssh-keygen -lf ~/.ssh/id_rsa
+          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }} << 'EOF'
+            echo "✅ Connexion établie"
 
-      - name: Test SSH Connection
-        run: |
-          echo "Tentative de connexion..."
-          ssh -v -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }} "echo 'Connexion SSH réussie !'"
+            cd ~/project
 
-      - name: Debug SSH Key
-        run: |
-          echo "${{ secrets.VPS_SSH_KEY }}" | head -n 5
-          echo "📌 Vérification des permissions SSH"
-          ls -la ~/.ssh/
-          
-      - name: Test SSH connection
-        uses: appleboy/ssh-action@v1.0.0
-        with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USERNAME }}
-          key: ${{ secrets.VPS_SSH_KEY }}
-          script: |
-            echo "✅ Connexion SSH réussie !"
-            ls -la /home/${{ secrets.VPS_USERNAME }}
-  
-      # - name: Configure SSH Key
-      #   run: |
-      #     mkdir -p ~/.ssh
-      #     echo "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/id_rsa
-      #     chmod 600 ~/.ssh/id_rsa
-      #     ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
+            echo "📥 Git Pull..."
+            git pull origin $(git rev-parse --abbrev-ref HEAD)
 
-      # - name: Test SSH Connection
-      #   run: |
-      #     ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }} "echo 'Connexion SSH réussie !'"
+            echo "🛠 Backend - Install + Build"
+            cd server
+            npm install
+            npm run build
+            pm2 restart backend || pm2 start dist/main.js --name backend
+            cd ..
 
-      # - name: Ensure directories exist on VPS
-      #   uses: appleboy/ssh-action@v1.0.0
-      #   with:
-      #     host: ${{ secrets.VPS_HOST }}
-      #     username: ${{ secrets.VPS_USERNAME }}
-      #     key: ${{ secrets.VPS_SSH_KEY }}
-      #     script: |
-      #       mkdir -p /home/${{ secrets.VPS_USERNAME }}/pretemoitontruc/server
-      #       mkdir -p /home/${{ secrets.VPS_USERNAME }}/pretemoitontruc/client
+            echo "💻 Frontend - Install + Build"
+            cd client
+            npm install
+            npm run build
+            pm2 restart frontend || pm2 start .output/server/index.mjs --name frontend
+            cd ..
 
-      # - name: Deploy to VPS via SSH (Install rsync)
-      #   uses: appleboy/ssh-action@v1.0.0
-      #   with:
-      #     host: ${{ secrets.VPS_HOST }}
-      #     username: ${{ secrets.VPS_USERNAME }}
-      #     key: ${{ secrets.VPS_SSH_KEY }}
-      #     script: |
-      #       sudo apt update
-      #       sudo apt install -y rsync nodejs npm
-      #       npm install -g pm2
-
-      # - name: Deploy files to VPS
-      #   run: |
-      #     rsync -avz -e "ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa" --exclude '.git' --exclude 'node_modules' ./server/ ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }}:/home/${{ secrets.VPS_USERNAME }}/pretemoitontruc/server/
-      #     rsync -avz -e "ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa" --exclude '.git' --exclude 'node_modules' ./client/ ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }}:/home/${{ secrets.VPS_USERNAME }}/pretemoitontruc/client/
-
-      # - name: Deploy to VPS via SSH (Restart services)
-      #   uses: appleboy/ssh-action@v1.0.0
-      #   with:
-      #     host: ${{ secrets.VPS_HOST }}
-      #     username: ${{ secrets.VPS_USERNAME }}
-      #     key: ${{ secrets.VPS_SSH_KEY }}
-      #     script: |
-      #       mkdir -p /home/${{ secrets.VPS_USERNAME }}/pretemoitontruc
-      #       cd /home/${{ secrets.VPS_USERNAME }}/pretemoitontruc
-
-      #       pm2 stop all || true
-
-      #       cd server
-      #       npm install --production
-      #       pm2 start dist/main.js --name my-api
-
-      #       cd ../client
-      #       npm install --production
-      #       npm run build
-      #       pm2 serve .output/public 3021 --spa --name my-front
+            echo "✅ Déploiement terminé avec succès"
+          EOF
