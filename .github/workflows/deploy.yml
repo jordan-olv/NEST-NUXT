@@ -41,6 +41,11 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
 
+      - name: 🔍 Vérification de la clé privée utilisée
+        run: |
+          echo "Fingerprint locale de la clé chargée :"
+          ssh-keygen -lf ~/.ssh/id_rsa
+
       - name: Test SSH Connection
         run: |
           echo "Tentative de connexion..."
