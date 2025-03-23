@@ -28,6 +28,10 @@ jobs:
 
             echo "📥 Pull du dernier code"
             git config --global --add safe.directory /home/deploy/project
+            git reset --hard
+            git clean -fd
+            git pull origin dev
+            chown -R deploy:deploy /home/deploy/project
 
             echo "🔧 Backend - Installation & Build"
             cd server || exit 1
