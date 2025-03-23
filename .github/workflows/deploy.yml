@@ -11,36 +11,40 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 📦 Préparation SSH
+      - name: 🛠️ Préparation de la connexion SSH
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
+          echo "🔐 Clé SSH configurée"
 
-      - name: 🚀 Déploiement sur le VPS
+      - name: 🚀 Connexion SSH & Déploiement
         run: |
           ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }} << 'EOF'
-            echo "✅ Connexion établie"
+            echo "✅ Connexion SSH réussie"
 
-            cd ~/project
+            cd ~/project || { echo "❌ Dossier project/ introuvable"; exit 1; }
 
-            echo "📥 Git Pull..."
+            echo "📥 Pull du dernier code"
             git pull origin $(git rev-parse --abbrev-ref HEAD)
 
-            echo "🛠 Backend - Install + Build"
-            cd server
+            echo "🔧 Backend - Installation & Build"
+            cd server || exit 1
             npm install
             npm run build
             pm2 restart backend || pm2 start dist/main.js --name backend
             cd ..
 
-            echo "💻 Frontend - Install + Build"
-            cd client
+            echo "🖥️ Frontend - Installation & Build"
+            cd client || exit 1
             npm install
             npm run build
             pm2 restart frontend || pm2 start .output/server/index.mjs --name frontend
             cd ..
 
-            echo "✅ Déploiement terminé avec succès"
+            echo "💾 Sauvegarde pm2"
+            pm2 save
+
+            echo "✅ Déploiement terminé avec succès 🎉"
           EOF
