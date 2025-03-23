@@ -27,7 +27,7 @@ jobs:
             cd ~/project || { echo "❌ Dossier project/ introuvable"; exit 1; }
 
             echo "📥 Pull du dernier code"
-            git pull origin $(git rev-parse --abbrev-ref HEAD)
+            git config --global --add safe.directory /home/deploy/project
 
             echo "🔧 Backend - Installation & Build"
             cd server || exit 1
