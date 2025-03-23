@@ -16,7 +16,7 @@ module.exports = {
       port: 3021,
       env: {
         NODE_ENV: "production",
-        PORT: 3021,
+        NITRO_PORT: 3021,
         HOST: "0.0.0.0",
       },
     },
