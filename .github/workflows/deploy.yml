@@ -37,10 +37,15 @@ jobs:
             cd ..
 
             echo "🖥️ Frontend - Installation & Build"
-            cd client || exit 1
+            cd client
             npm install
             npm run build
-            pm2 restart frontend || pm2 start .output/server/index.mjs --name frontend
+
+            # Arrête l'ancien (si existe)
+            pm2 delete frontend || true
+
+            # Démarre sur le bon port
+            PORT=3021 HOST=0.0.0.0 pm2 start .output/server/index.mjs --name frontend
             cd ..
 
             echo "💾 Sauvegarde pm2"
