@@ -6,6 +6,9 @@ export default defineNuxtConfig({
     port: 3021,
     host: '0.0.0.0'
   },
+  nitro: {
+    preset: 'node-server'
+  },
   vite: {
     server: {
       watch: {
