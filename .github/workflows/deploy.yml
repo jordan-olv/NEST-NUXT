@@ -31,28 +31,24 @@ jobs:
             git reset --hard
             git clean -fd
             git pull origin dev
+
+            echo "🔧 Réassignation des droits"
             chown -R deploy:deploy /home/deploy/project
 
-            echo "🔧 Backend - Installation & Build"
-            cd server || exit 1
-            npm install
-            npm run build
-            pm2 restart backend || pm2 start dist/main.js --name backend
-            cd ..
-
-            echo "🖥️ Frontend - Installation & Build"
-            cd client
+            echo "🛠 Backend - Installation & Build"
+            cd server
             npm install
             npm run build
 
-            # Arrête l'ancien (si existe)
-            pm2 delete frontend || true
+            echo "💻 Frontend - Installation & Build"
+            cd ../client
+            npm install
+            npm run build
 
-            # Démarre sur le bon port
-            PORT=3021 HOST=0.0.0.0 pm2 start .output/server/index.mjs --name frontend
+            echo "🚀 Lancement avec PM2 (ecosystem)"
             cd ..
-
-            echo "💾 Sauvegarde pm2"
+            pm2 delete all || true
+            pm2 start ecosystem.config.cjs
             pm2 save
 
             echo "✅ Déploiement terminé avec succès 🎉"
