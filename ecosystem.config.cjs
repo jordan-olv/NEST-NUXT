@@ -6,6 +6,7 @@ module.exports = {
       cwd: "./server",
       env: {
         NODE_ENV: "production",
+        PORT: 4022,
       },
     },
     {
