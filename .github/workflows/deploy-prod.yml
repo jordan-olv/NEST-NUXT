@@ -27,7 +27,7 @@ jobs:
 
             if [ ! -d ".git" ]; then
               echo "📁 Clonage initial"
-              git clone -b main git@github.com:jordan-olv/NEST-NUXT.git .
+              git clone -b main https://github.com/jordan-olv/NEST-NUXT.git .
             fi
 
             echo "📥 Pull du dernier code"
