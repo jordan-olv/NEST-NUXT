@@ -1,0 +1,60 @@
+name: 🚀 Deploy PROD to VPS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🔐 Préparer la clé SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
+
+      - name: 🚀 Déploiement SSH
+        run: |
+          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }} << 'EOF'
+            echo "✅ Connexion SSH réussie"
+
+            mkdir -p ~/project/FriendlyShare/main
+            cd ~/project/FriendlyShare/main
+
+            if [ ! -d ".git" ]; then
+              echo "📁 Clonage initial"
+              git clone -b main git@github.com:jordan-olv/NEST-NUXT.git .
+            fi
+
+            echo "📥 Pull du dernier code"
+            git config --global --add safe.directory /home/deploy/project/FriendlyShare/main
+            git reset --hard
+            git clean -fd
+            git pull origin main
+
+            echo "🔧 Droits"
+            chown -R deploy:deploy ~/project/FriendlyShare/main
+
+            echo "🛠 Backend - Installation & Build"
+            cd server
+            npm install
+            npm run build
+
+            echo "💻 Frontend - Installation & Build"
+            cd ../client
+            npm install
+            npm run build
+
+            echo "🚀 PM2 Restart (ecosystem)"
+            cd ..
+            pm2 delete backend-prod || true
+            pm2 delete frontend-prod || true
+            pm2 start ecosystem.config.cjs
+            pm2 save
+
+            echo "✅ Déploiement PROD terminé 🎉"
+          EOF

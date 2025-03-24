@@ -1,22 +1,20 @@
-module.exports = {
+export default {
   apps: [
     {
-      name: "backend",
-      cwd: "./server",
+      name: "backend-dev",
       script: "dist/main.js",
+      cwd: "./server",
       env: {
-        NODE_ENV: "production",
-        PORT: 4021,
+        NODE_ENV: "development",
       },
     },
     {
-      name: "frontend",
-      cwd: "./client",
+      name: "frontend-dev",
       script: ".output/server/index.mjs",
-      port: 3021,
+      cwd: "./client",
       env: {
-        NODE_ENV: "production",
-        NITRO_PORT: 3021,
+        NODE_ENV: "development",
+        PORT: 3022,
         HOST: "0.0.0.0",
       },
     },
