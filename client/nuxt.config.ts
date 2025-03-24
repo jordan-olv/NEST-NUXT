@@ -8,16 +8,18 @@ export default defineNuxtConfig({
   },
   nitro: {
     preset: 'node-server'
-
   },
+  serverMiddleware: [
+    '~/server/middleware/metrics.global.ts'
+  ],
   vite: {
     server: {
       watch: {
-        usePolling: true, // Force Vite à surveiller les fichiers en continu
-        interval: 100 // Vérifie plus fréquemment
+        usePolling: true,
+        interval: 100
       },
       hmr: {
-        clientPort: 3021, // Assure la connexion HMR
+        clientPort: 3021
       }
     }
   }
